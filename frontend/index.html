@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Notes — Docker Learning</title>
+    <style>
+      :root {
+        --bg: #f6f4ef;
+        --ink: #1a1a1a;
+        --muted: #5c5c5c;
+        --line: #d4cfc4;
+        --ok: #1f7a4c;
+        --bad: #a33b2d;
+        --accent: #2c5f8a;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.45;
+      }
+      main {
+        max-width: 40rem;
+        margin: 0 auto;
+        padding: 2rem 1.25rem 3rem;
+      }
+      header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 0.75rem;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+      }
+      #health {
+        font-family: ui-monospace, monospace;
+        font-size: 0.75rem;
+        padding: 0.2rem 0.5rem;
+        border: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      #health.ok {
+        color: var(--ok);
+        border-color: var(--ok);
+      }
+      #health.bad {
+        color: var(--bad);
+        border-color: var(--bad);
+      }
+      form {
+        display: grid;
+        gap: 0.6rem;
+        margin-bottom: 2rem;
+      }
+      label {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 0.5rem 0.6rem;
+        border: 1px solid var(--line);
+        background: #fff;
+        font: inherit;
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+        border: 1px solid var(--ink);
+        background: var(--ink);
+        color: #fff;
+        padding: 0.45rem 0.9rem;
+      }
+      button.secondary {
+        background: transparent;
+        color: var(--ink);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .meta {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-bottom: 0.75rem;
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      li {
+        border-top: 1px solid var(--line);
+        padding: 0.9rem 0;
+        display: grid;
+        gap: 0.35rem;
+      }
+      li .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 0.75rem;
+      }
+      li h2 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+      li p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      .error {
+        color: var(--bad);
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Notes</h1>
+        <span id="health" title="API / DB / Redis">checking…</span>
+      </header>
+
+      <p id="error" class="error" hidden></p>
+
+      <form id="add-form">
+        <div>
+          <label for="title">Title</label>
+          <input id="title" name="title" required maxlength="200" autocomplete="off" />
+        </div>
+        <div>
+          <label for="body">Body</label>
+          <textarea id="body" name="body" rows="3" maxlength="2000"></textarea>
+        </div>
+        <button type="submit">Add note</button>
+      </form>
+
+      <p class="meta" id="source"></p>
+      <ul id="list"></ul>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
