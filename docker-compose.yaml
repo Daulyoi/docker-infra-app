@@ -32,6 +32,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    image: daulyoi/backend
     ports:
       - "127.0.0.1:3000:3000"
     env_file:
@@ -47,8 +48,10 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: daulyoi/frontend
     ports:
-      - "127.0.0.1:8080:80"
+      # Publish on all interfaces so the UI is reachable on EC2 (not only localhost)
+      - "8080:80"
     depends_on:
       - backend
     networks:
@@ -57,6 +60,7 @@ services:
     build:
       context: ./worker
       dockerfile: Dockerfile
+    image: daulyoi/worker
     depends_on:
       - backend
     networks:
