@@ -122,9 +122,37 @@
         color: var(--muted);
         font-size: 0.95rem;
       }
+      li .actions {
+        display: flex;
+        gap: 0.4rem;
+        flex-shrink: 0;
+      }
       .error {
         color: var(--bad);
         margin-bottom: 1rem;
+      }
+      #detail {
+        border-top: 1px solid var(--line);
+        padding-top: 1.25rem;
+      }
+      #detail .detail-actions {
+        margin-bottom: 1.25rem;
+      }
+      #detail h2 {
+        margin: 0 0 0.75rem;
+        font-size: 1.6rem;
+        line-height: 1.25;
+      }
+      #detail .detail-body {
+        margin: 0;
+        font-size: 1.1rem;
+        white-space: pre-wrap;
+        color: var(--ink);
+      }
+      #detail .detail-meta {
+        margin-top: 1.25rem;
+        font-size: 0.8rem;
+        color: var(--muted);
       }
     </style>
   </head>
@@ -139,7 +167,7 @@
 
       <form id="add-form">
         <div>
-          <label for="title">Title</label>
+          <label for="title">Title Woy</label>
           <input id="title" name="title" required maxlength="200" autocomplete="off" />
         </div>
         <div>
@@ -149,8 +177,19 @@
         <button type="submit">Add note</button>
       </form>
 
-      <p class="meta" id="source"></p>
-      <ul id="list"></ul>
+      <div id="list-view">
+        <p class="meta" id="source"></p>
+        <ul id="list"></ul>
+      </div>
+
+      <section id="detail" hidden>
+        <div class="detail-actions">
+          <button type="button" class="secondary" id="detail-back">← Back to list</button>
+        </div>
+        <h2 id="detail-title"></h2>
+        <p class="detail-body" id="detail-body"></p>
+        <p class="detail-meta" id="detail-meta"></p>
+      </section>
     </main>
     <script src="./app.js"></script>
   </body>

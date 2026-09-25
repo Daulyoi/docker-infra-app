@@ -1,12 +1,18 @@
-// Local (no Docker): point at the API on the host.
-// Behind nginx reverse-proxy in Compose: set to '' so requests go to same-origin /api/...
-const API_URL = 'http://localhost:3000';
+// Empty = same-origin /api/... (nginx proxies to the backend in Docker/EC2).
+// For local static serving without the proxy, use: 'http://localhost:3000'
+const API_URL = '';
 
 const healthEl = document.getElementById('health');
 const listEl = document.getElementById('list');
+const listViewEl = document.getElementById('list-view');
 const sourceEl = document.getElementById('source');
 const errorEl = document.getElementById('error');
 const form = document.getElementById('add-form');
+const detailEl = document.getElementById('detail');
+const detailTitleEl = document.getElementById('detail-title');
+const detailBodyEl = document.getElementById('detail-body');
+const detailMetaEl = document.getElementById('detail-meta');
+const detailBackBtn = document.getElementById('detail-back');
 
 function showError(message) {
   if (!message) {
@@ -16,6 +22,24 @@ function showError(message) {
   }
   errorEl.hidden = false;
   errorEl.textContent = message;
+}
+
+function showListView() {
+  detailEl.hidden = true;
+  listViewEl.hidden = false;
+  form.hidden = false;
+}
+
+function showDetailView(item) {
+  detailTitleEl.textContent = item.title;
+  detailBodyEl.textContent = item.body || '';
+  const created = item.created_at
+    ? new Date(item.created_at).toLocaleString()
+    : '';
+  detailMetaEl.textContent = created ? `Created ${created}` : '';
+  listViewEl.hidden = true;
+  form.hidden = true;
+  detailEl.hidden = false;
 }
 
 async function checkHealth() {
@@ -42,16 +66,31 @@ function renderItems(items) {
     li.innerHTML = `
       <div class="row">
         <h2></h2>
-        <button type="button" class="secondary" data-id="">Delete</button>
+        <div class="actions">
+          <button type="button" class="secondary view-btn">View</button>
+          <button type="button" class="secondary delete-btn">Delete</button>
+        </div>
       </div>
       <p class="body"></p>
     `;
     li.querySelector('h2').textContent = item.title;
     li.querySelector('.body').textContent = item.body || '';
-    const btn = li.querySelector('button');
-    btn.dataset.id = String(item.id);
-    btn.addEventListener('click', () => deleteItem(item.id));
+    li.querySelector('.view-btn').addEventListener('click', () => openItem(item.id));
+    li.querySelector('.delete-btn').addEventListener('click', () => deleteItem(item.id));
     listEl.appendChild(li);
+  }
+}
+
+async function openItem(id) {
+  showError('');
+  try {
+    const res = await fetch(`${API_URL}/api/items/${id}`);
+    if (res.status === 404) throw new Error('Note not found');
+    if (!res.ok) throw new Error(`Failed to load note (${res.status})`);
+    const item = await res.json();
+    showDetailView(item);
+  } catch (err) {
+    showError(err.message || 'Failed to load note');
   }
 }
 
@@ -83,6 +122,11 @@ async function deleteItem(id) {
     showError(err.message || 'Failed to delete');
   }
 }
+
+detailBackBtn.addEventListener('click', () => {
+  showError('');
+  showListView();
+});
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
