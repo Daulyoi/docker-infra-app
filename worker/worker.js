@@ -14,10 +14,10 @@ const pool = new Pool({
 
 const INTERVAL_MS = Number(process.env.POLL_INTERVAL_MS || 15000);
 
-async function waitForDb(retries = 10, delayMs = 2000) {
+async function waitForDb(db = pool, retries = 10, delayMs = 2000) {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      await pool.query('SELECT 1');
+      await db.query('SELECT 1');
       console.log('Worker connected to Postgres');
       return;
     } catch (err) {
@@ -30,13 +30,15 @@ async function waitForDb(retries = 10, delayMs = 2000) {
   }
 }
 
-async function tick() {
+async function tick(db = pool) {
   try {
-    const { rows } = await pool.query('SELECT COUNT(*)::int AS count FROM items');
+    const { rows } = await db.query('SELECT COUNT(*)::int AS count FROM items');
     const count = rows[0].count;
     console.log(`[${new Date().toISOString()}] items in database: ${count}`);
+    return count;
   } catch (err) {
     console.error('Worker poll failed:', err.message);
+    return null;
   }
 }
 
@@ -46,7 +48,11 @@ async function main() {
   setInterval(tick, INTERVAL_MS);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+module.exports = { waitForDb, tick, main, pool, INTERVAL_MS };
+
+if (require.main === module) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

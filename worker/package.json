@@ -6,7 +6,8 @@
   "main": "worker.js",
   "scripts": {
     "start": "node worker.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=18"
