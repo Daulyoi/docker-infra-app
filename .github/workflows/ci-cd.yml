@@ -87,19 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # Copy docker-compose to server using scp action, then run docker compose pull & up via appleboy/ssh-action
-      - uses: appleboy/scp-action@v1
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: 'docker-compose.yaml'
-          target: '~/'
-      - uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            docker compose pull
-            docker compose up -d
+      - run: scp -i ${{ secrets.SSH_PRIVATE_KEY }} .docker-compose.yaml
+      - run: ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
+      - run: docker compose pull
+      - run: docker compose up -d
