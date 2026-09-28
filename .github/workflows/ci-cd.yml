@@ -87,7 +87,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: scp -i ${{ secrets.SSH_PRIVATE_KEY }} .docker-compose.yaml
-      - run: ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
+      - name: Decode and save PEM file
+        env:
+          PEM_SECRET: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "$PEM_SECRET" | base64 -d > ./your-file.pem
+          chmod 600 ./your-file.pem
+      - run: scp -i ./your-file.pem .docker-compose.yaml
+      - run: ssh -i ./your-file.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
       - run: docker compose pull
       - run: docker compose up -d
