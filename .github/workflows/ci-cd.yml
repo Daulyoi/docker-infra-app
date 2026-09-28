@@ -87,12 +87,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # - name: Decode and save PEM file
-      #   env:
-      #     PEM_SECRET: ${{ secrets.SSH_PRIVATE_KEY }}
-      #   run: |
-      #     echo "$PEM_SECRET" | base64 -d > ./your-file.pem
-      #     chmod 600 ./your-file.pem
       - uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
