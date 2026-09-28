@@ -32,7 +32,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    image: ghcr.io/daulyoi/backend
+    image: ghcr.io/daulyoi/backend:latest
     ports:
       - "127.0.0.1:3000:3000"
     env_file:
@@ -48,7 +48,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: ghcr.io/daulyoi/frontend
+    image: ghcr.io/daulyoi/frontend:latest
     ports:
       # Publish on all interfaces so the UI is reachable on EC2 (not only localhost)
       - "8080:80"
@@ -60,7 +60,7 @@ services:
     build:
       context: ./worker
       dockerfile: Dockerfile
-    image: ghcr.io/daulyoi/worker
+    image: ghcr.io/daulyoi/worker:latest
     depends_on:
       - backend
     networks:
