@@ -93,7 +93,11 @@ jobs:
         run: |
           echo "$PEM_SECRET" | base64 -d > ./your-file.pem
           chmod 600 ./your-file.pem
-      - run: scp -i ./your-file.pem .docker-compose.yaml ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
-      - run: ssh -i ./your-file.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
-      - run: docker compose pull
-      - run: docker compose up -d
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ./your-file.pem
+          script: |
+            docker compose pull
+            docker compose up -d
