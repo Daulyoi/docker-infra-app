@@ -70,11 +70,11 @@ describe('API', () => {
   it('GET /api/health returns 200 when db and redis are up', async () => {
     const res = await request(app).get('/api/health');
     assert.equal(res.status, 200);
-    assert.deepEqual(res.body, {
-      status: 'ok',
-      db: 'up',
-      redis: 'up',
-    });
+    assert.equal(res.body.status, 'ok');
+    assert.equal(res.body.db, 'up');
+    assert.equal(res.body.redis, 'up');
+    assert.equal(typeof res.body.upSince, 'string');
+    assert.ok(!Number.isNaN(Date.parse(res.body.upSince)));
   });
 
   it('GET /api/health returns 503 when a dependency is down', async () => {
@@ -82,10 +82,9 @@ describe('API', () => {
 
     const res = await request(app).get('/api/health');
     assert.equal(res.status, 503);
-    assert.deepEqual(res.body, {
-      status: 'degraded',
-      db: 'up',
-      redis: 'down',
-    });
+    assert.equal(res.body.status, 'degraded');
+    assert.equal(res.body.db, 'up');
+    assert.equal(res.body.redis, 'down');
+    assert.equal(typeof res.body.upSince, 'string');
   });
 });

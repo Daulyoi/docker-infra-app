@@ -10,6 +10,7 @@ function createApp({
   checkRedis,
 }) {
   const app = express();
+  const upSince = new Date().toISOString();
 
   app.use(
     cors({
@@ -28,6 +29,7 @@ function createApp({
       status: ok ? 'ok' : 'degraded',
       db: dbOk ? 'up' : 'down',
       redis: redisOk ? 'up' : 'down',
+      upSince,
     });
   });
 

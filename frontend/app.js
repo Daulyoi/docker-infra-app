@@ -3,6 +3,7 @@
 const API_URL = '';
 
 const healthEl = document.getElementById('health');
+const upSinceEl = document.getElementById('up-since');
 const listEl = document.getElementById('list');
 const listViewEl = document.getElementById('list-view');
 const sourceEl = document.getElementById('source');
@@ -49,9 +50,16 @@ async function checkHealth() {
     const label = `health: ${data.status} (db ${data.db}, redis ${data.redis})`;
     healthEl.textContent = label;
     healthEl.className = data.status === 'ok' ? 'ok' : 'bad';
+    if (data.upSince) {
+      upSinceEl.textContent = `Up since ${new Date(data.upSince).toLocaleString()}`;
+      upSinceEl.hidden = false;
+    } else {
+      upSinceEl.hidden = true;
+    }
   } catch {
     healthEl.textContent = 'health: unreachable';
     healthEl.className = 'bad';
+    upSinceEl.hidden = true;
   }
 }
 
