@@ -25,7 +25,7 @@ function createApp({
     const dbOk = await checkDb();
     const redisOk = await checkRedis();
     const ok = dbOk && redisOk;
-    res.status(ok ? 200 : 503).json({
+    res.set('Cache-Control', 'no-store').status(ok ? 200 : 503).json({
       status: ok ? 'ok' : 'degraded',
       db: dbOk ? 'up' : 'down',
       redis: redisOk ? 'up' : 'down',

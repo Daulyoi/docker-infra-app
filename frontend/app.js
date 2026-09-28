@@ -45,8 +45,9 @@ function showDetailView(item) {
 
 async function checkHealth() {
   try {
-    const res = await fetch(`${API_URL}/api/health`);
-    const data = await res.json();
+    const res = await fetch(`${API_URL}/api/health`, { cache: 'no-store' });
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : {};
     const label = `health: ${data.status} (db ${data.db}, redis ${data.redis})`;
     healthEl.textContent = label;
     healthEl.className = data.status === 'ok' ? 'ok' : 'bad';
