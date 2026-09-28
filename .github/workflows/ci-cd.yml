@@ -52,7 +52,6 @@ jobs:
   build:
     permissions:
       contents: read
-      packages: write
     needs: [lint, test]
     runs-on: ubuntu-latest
     strategy:
@@ -65,12 +64,12 @@ jobs:
         if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GHCR_PAT }}
       - uses: docker/metadata-action@v5
         id: meta
         with:
-          images: ghcr.io/${{ github.actor }}/${{ matrix.service }}
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.service }}
           tags: |
             type=sha
             type=ref,event=branch
