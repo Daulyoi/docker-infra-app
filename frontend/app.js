@@ -52,14 +52,15 @@ async function checkHealth() {
     healthEl.className = data.status === 'ok' ? 'ok' : 'bad';
     if (data.upSince) {
       upSinceEl.textContent = `Up since ${new Date(data.upSince).toLocaleString()}`;
-      upSinceEl.hidden = false;
     } else {
-      upSinceEl.hidden = true;
+      upSinceEl.textContent = 'uptime: unknown (no upSince in response)';
     }
-  } catch {
+    upSinceEl.title = upSinceEl.textContent;
+  } catch (err) {
     healthEl.textContent = 'health: unreachable';
     healthEl.className = 'bad';
-    upSinceEl.hidden = true;
+    upSinceEl.textContent = `uptime: error — ${err.message || err}`;
+    upSinceEl.title = upSinceEl.textContent;
   }
 }
 
