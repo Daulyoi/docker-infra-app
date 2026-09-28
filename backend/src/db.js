@@ -27,7 +27,9 @@ async function waitForDb(retries = 10, delayMs = 2000) {
         `Postgres not ready (attempt ${attempt}/${retries}): ${err.message}`
       );
       if (attempt === retries) {
-        throw new Error('Could not connect to Postgres after retries');
+        throw new Error('Could not connect to Postgres after retries', {
+          cause: err,
+        });
       }
       await new Promise((r) => setTimeout(r, delayMs));
     }

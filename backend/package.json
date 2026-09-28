@@ -6,7 +6,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
+    "dev": "node --watch src/index.js",
+    "lint": "eslint src"
   },
   "engines": {
     "node": ">=18"
@@ -17,5 +18,10 @@
     "express": "^4.21.0",
     "ioredis": "^5.4.1",
     "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0"
   }
 }
