@@ -49,20 +49,26 @@
         align-items: flex-end;
         gap: 0.25rem;
       }
-      #health {
+      #health,
+      #environment {
         font-family: ui-monospace, monospace;
         font-size: 0.75rem;
         padding: 0.2rem 0.5rem;
         border: 1px solid var(--line);
         white-space: nowrap;
       }
-      #health.ok {
+      #health.ok,
+      #environment.local {
         color: var(--ok);
         border-color: var(--ok);
       }
       #health.bad {
         color: var(--bad);
         border-color: var(--bad);
+      }
+      #environment.remote {
+        color: var(--accent);
+        border-color: var(--accent);
       }
       #up-since {
         font-family: ui-monospace, monospace;
@@ -173,6 +179,7 @@
       <header>
         <h1>Notes</h1>
         <div class="status">
+          <span id="environment" title="Where the app is being viewed from">detecting…</span>
           <span id="health" title="API / DB / Redis">checking…</span>
           <span id="up-since">uptime: checking…</span>
         </div>

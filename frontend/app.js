@@ -14,6 +14,19 @@ const detailTitleEl = document.getElementById('detail-title');
 const detailBodyEl = document.getElementById('detail-body');
 const detailMetaEl = document.getElementById('detail-meta');
 const detailBackBtn = document.getElementById('detail-back');
+const environmentEl = document.getElementById('environment');
+
+function showEnvironment() {
+  const host = window.location.hostname;
+  const isLocal =
+    host === 'localhost' ||
+    host === '127.0.0.1' ||
+    host === '::1' ||
+    host.endsWith('.localhost');
+  environmentEl.textContent = isLocal ? 'Local' : 'Remote (EC2)';
+  environmentEl.className = isLocal ? 'local' : 'remote';
+  environmentEl.title = `Viewing from ${host}`;
+}
 
 function showError(message) {
   if (!message) {
@@ -162,6 +175,7 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
+showEnvironment();
 checkHealth();
 loadItems();
 setInterval(checkHealth, 10000);

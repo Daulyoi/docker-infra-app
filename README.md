@@ -53,6 +53,8 @@ Same `DB_*` vars as the backend. Optional: `POLL_INTERVAL_MS` (default `15000`).
 
 `API_URL` is a constant at the top of `frontend/app.js` (default `http://localhost:3000`). When you put nginx in front and proxy `/api` to the backend, change it to `''` so the browser uses same-origin `/api/...`.
 
+The header badge shows **Local** vs **Remote (EC2)** based on the browser's hostname: `localhost`/`127.0.0.1`/`::1` render as Local, anything else (e.g. an EC2 address) as Remote (EC2).
+
 ## API
 
 | Method   | Path              | Behavior                                      |
