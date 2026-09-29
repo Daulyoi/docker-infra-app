@@ -103,12 +103,14 @@ jobs:
 
       - name: Deploy to EC2 via AWS SSM
         run: |
-          aws ssm send-command \
+          command_id=$(aws ssm send-command \
             --instance-ids "${{ vars.AWS_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Deploying latest Docker containers via GitHub Actions" \
             --parameters 'commands=[
-              "docker compose pull",
-              "docker compose up -d"
+              "sudo -u ec2-user docker compose pull",
+              "sudo -u ec2-user docker compose up -d"
             ]' \
             --region us-east-1
+            --query "Command.CommandId" --output text)
+          aws ssm wait command-executed --command-id $command_id
