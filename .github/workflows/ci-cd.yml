@@ -113,13 +113,7 @@ jobs:
             --comment "Deploying latest Docker containers via GitHub Actions" \
             --parameters 'commands=[
               "set -eu",
-              "APP_DIR=/home/ec2-user/docker-infra-app",
-              "if [ ! -d \"$APP_DIR/.git\" ]; then",
-              "  sudo -u ec2-user -H git clone https://github.com/${{ github.repository }}.git \"$APP_DIR\"",
-              "else",
-              "  sudo -u ec2-user -H git -C \"$APP_DIR\" fetch --prune origin",
-              "  sudo -u ec2-user -H git -C \"$APP_DIR\" reset --hard origin/main",
-              "fi",
+              "APP_DIR=/home/ec2-user",
               "sudo -u ec2-user -H docker compose -f \"$APP_DIR/docker-compose.yml\" pull",
               "sudo -u ec2-user -H docker compose -f \"$APP_DIR/docker-compose.yml\" up -d --remove-orphans"
             ]' \
