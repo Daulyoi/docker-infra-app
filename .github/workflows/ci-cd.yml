@@ -113,9 +113,15 @@ jobs:
             --comment "Deploying latest Docker containers via GitHub Actions" \
             --parameters 'commands=[
               "set -eu",
-              "cd /home/ec2-user/docker-infra-app",
-              "sudo -u ec2-user -H docker compose pull",
-              "sudo -u ec2-user -H docker compose up -d"
+              "APP_DIR=/home/ec2-user/docker-infra-app",
+              "if [ ! -d \"$APP_DIR/.git\" ]; then",
+              "  sudo -u ec2-user -H git clone https://github.com/${{ github.repository }}.git \"$APP_DIR\"",
+              "else",
+              "  sudo -u ec2-user -H git -C \"$APP_DIR\" fetch --prune origin",
+              "  sudo -u ec2-user -H git -C \"$APP_DIR\" reset --hard origin/main",
+              "fi",
+              "sudo -u ec2-user -H docker compose -f \"$APP_DIR/docker-compose.yml\" pull",
+              "sudo -u ec2-user -H docker compose -f \"$APP_DIR/docker-compose.yml\" up -d --remove-orphans"
             ]' \
             --region us-east-1 \
             --query "Command.CommandId" \
@@ -125,7 +131,6 @@ jobs:
             --command-id "$command_id" \
             --instance-id "${{ vars.AWS_INSTANCE_ID }}" \
             --region us-east-1; then
-
             echo "SSM command failed: $command_id"
 
             aws ssm get-command-invocation \
