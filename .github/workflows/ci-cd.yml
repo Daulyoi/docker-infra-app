@@ -113,9 +113,8 @@ jobs:
             --comment "Deploying latest Docker containers via GitHub Actions" \
             --parameters 'commands=[
               "set -eu",
-              "pwd | echo \"Current directory: \"",
-              "sudo -u ec2-user -H docker compose -f docker-compose.yml pull",
-              "sudo -u ec2-user -H docker compose -f docker-compose.yml up -d --remove-orphans"
+              "sudo -u ec2-user -H docker compose -f /home/ec2-user/docker-compose.yml pull",
+              "sudo -u ec2-user -H docker compose -f /home/ec2-user/docker-compose.yml up -d --remove-orphans"
             ]' \
             --region us-east-1 \
             --query "Command.CommandId" \
