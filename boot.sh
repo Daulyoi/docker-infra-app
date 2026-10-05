@@ -15,10 +15,10 @@ docker run -d \
     --name notes-db \
     --network "$NETWORK" \
     --network-alias db \
-    -p 127.0.0.1:5432:5432 \
-    -e POSTGRES_USER=notes \
-    -e POSTGRES_PASSWORD=notespass \
-    -e POSTGRES_DB=notesdb \
+    -p 127.0.0.1:${DB_PORT}:5432 \
+    -e POSTGRES_USER=${DB_USER}\
+    -e POSTGRES_PASSWORD=${DB_PASSWORD}\
+    -e POSTGRES_DB=${DB_NAME}\
     --volume postgres-data:/var/lib/postgresql \
     --volume "$(pwd)/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro" \
     --restart unless-stopped \
@@ -29,7 +29,7 @@ docker run -d \
     --name notes-redis \
     --network "$NETWORK" \
     --network-alias cache \
-    -p 127.0.0.1:6379:6379 \
+    -p 127.0.0.1:${REDIS_PORT}:6379 \
     --restart unless-stopped \
     redis:8.2
 
@@ -37,7 +37,7 @@ echo "[INFO] Starting Backend..."
 docker run -d \
     --name notes-backend \
     --network "$NETWORK" \
-    -p 127.0.0.1:3000:3000 \
+    -p 127.0.0.1:${PORT}:3000 \
     -e DB_HOST=db \
     -e REDIS_HOST=cache \
     --restart unless-stopped \
@@ -55,7 +55,7 @@ echo "[INFO] Starting Worker..."
 docker run -d \
     --name notes-worker \
     --network "$NETWORK" \
-    -e DB_HOST=db \
+    -e DB_HOST=${DB_HOST} \
     --restart unless-stopped \
     worker-image
 
