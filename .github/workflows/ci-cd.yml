@@ -80,51 +80,44 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
 
-  deploy:
-    needs: [build]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-
-    # REQUIRED FOR OIDC AUTHENTICATION
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: aws-actions/configure-aws-credentials@v6
-        with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
-          aws-region: us-east-1
-          audience: sts.amazonaws.com
-
-      - name: Verify AWS Identity
-        run: aws sts get-caller-identity
-
       - name: Deploy to EC2 via AWS SSM
         shell: bash
         run: |
           set -euo pipefail
 
-          # Fetch secrets from AWS Secrets Manager
           secrets=$(aws secretsmanager get-secret-value \
             --secret-id docker-infra-app/env \
             --query SecretString \
             --output text \
             --region us-east-1)
 
-          # Generate .env file on the EC2 instance
+          # Encode the secret so it can safely be embedded in the remote command.
+          secret_b64=$(printf '%s' "$secrets" | base64 | tr -d '\n')
+
+          write_env_cmd=$(cat <<EOF
+          printf '%s' '$secret_b64' |
+            base64 -d |
+            jq -r 'to_entries | .[] | "\(.key)=\(.value)"' \
+            > /home/ec2-user/.env
+          EOF
+          )
+
+          parameters=$(jq -cn \
+            --arg write_env_cmd "$write_env_cmd" \
+            '{
+              commands: [
+                "set -eu",
+                $write_env_cmd,
+                "sudo -u ec2-user -H docker compose -f /home/ec2-user/docker-compose.yaml pull",
+                "sudo -u ec2-user -H docker compose -f /home/ec2-user/docker-compose.yaml up -d --remove-orphans"
+              ]
+            }')
+
           command_id=$(aws ssm send-command \
             --instance-ids "${{ vars.AWS_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Deploying latest Docker containers via GitHub Actions" \
-            --parameters 'commands=[
-              "set -eu",
-              "echo '"$secrets"' | jq -r '"'"'to_entries | .[] | \"\\(.key)=\\(.value)\"'"'"' > /home/ec2-user/.env",
-              "sudo -u ec2-user -H docker compose -f /home/ec2-user/docker-compose.yaml pull",
-              "sudo -u ec2-user -H docker compose -f /home/ec2-user/docker-compose.yaml up -d --remove-orphans"
-            ]' \
+            --parameters "$parameters" \
             --region us-east-1 \
             --query "Command.CommandId" \
             --output text)
