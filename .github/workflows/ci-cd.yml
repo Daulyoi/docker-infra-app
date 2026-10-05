@@ -107,12 +107,21 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Fetch secrets from AWS Secrets Manager
+          secrets=$(aws secretsmanager get-secret-value \
+            --secret-id docker-infra-app/env \
+            --query SecretString \
+            --output text \
+            --region us-east-1)
+
+          # Generate .env file on the EC2 instance
           command_id=$(aws ssm send-command \
             --instance-ids "${{ vars.AWS_INSTANCE_ID }}" \
             --document-name "AWS-RunShellScript" \
             --comment "Deploying latest Docker containers via GitHub Actions" \
             --parameters 'commands=[
               "set -eu",
+              "echo '"$secrets"' | jq -r '"'"'to_entries | .[] | \"\\(.key)=\\(.value)\"'"'"' > /home/ec2-user/.env",
               "sudo -u ec2-user -H docker compose -f /home/ec2-user/docker-compose.yaml pull",
               "sudo -u ec2-user -H docker compose -f /home/ec2-user/docker-compose.yaml up -d --remove-orphans"
             ]' \
