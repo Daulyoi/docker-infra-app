@@ -18,7 +18,7 @@ const app = createApp({
   invalidateListCache,
   checkRedis,
 });
-const PORT = Number(process.env.PORT || 3000);
+const PORT = Number(process.env.PORT);
 
 async function start() {
   await waitForDb();

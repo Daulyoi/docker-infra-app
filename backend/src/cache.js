@@ -6,8 +6,8 @@ const LIST_TTL_SECONDS = 30;
 // REDIS_HOST should be the Compose service name (e.g. "cache"), not localhost,
 // when the API runs inside a container on the same network as Redis.
 const redis = new Redis({
-  host: process.env.REDIS_HOST || 'cache',
-  port: Number(process.env.REDIS_PORT || 6379),
+  host: process.env.REDIS_HOST,
+  port: Number(process.env.REDIS_PORT),
   maxRetriesPerRequest: 1,
   lazyConnect: true,
 });

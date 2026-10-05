@@ -4,11 +4,11 @@ const { Pool } = require('pg');
 // so containers resolve each other via the user-defined bridge network DNS.
 // Locally without Docker, set DB_HOST=localhost.
 const pool = new Pool({
-  host: process.env.DB_HOST || 'db',
-  port: Number(process.env.DB_PORT || 5432),
-  user: process.env.DB_USER || 'notes',
-  password: process.env.DB_PASSWORD || 'notespass',
-  database: process.env.DB_NAME || 'notesdb',
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 /**
