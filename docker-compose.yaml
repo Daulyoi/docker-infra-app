@@ -35,8 +35,15 @@ services:
     image: ghcr.io/daulyoi/backend:latest
     ports:
       - "127.0.0.1:3000:3000"
-    env_file:
-      - ./backend/.env
+    environment:
+      - PORT=${PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     depends_on:
       db:
         condition: service_healthy
@@ -65,7 +72,13 @@ services:
       - backend
     networks:
       - notes-network
-
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - POLL_INTERVAL_MS=${POLL_INTERVAL_MS}
 volumes:
   postgres-data:
     driver: local
