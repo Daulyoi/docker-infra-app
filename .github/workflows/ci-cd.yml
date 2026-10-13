@@ -80,6 +80,8 @@ jobs:
           context: ./${{ matrix.service }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
 
 #   deploy:
 #     needs: [build]
